@@ -1,35 +1,41 @@
-const mongoose = require('mongoose');
+var express = require('express'); // express library
+var bodyParser = require('body-parser'); //body parser library
 
-mongoose.Promise = global.Promise;
+var { mongoose } = require('./db/mongodb'); // object destructuring that only stores mongoose property
+var { Todo } = require('./models/todos'); // stores todo model
+var { User } = require('./models/user'); //stores user model
 
-mongoose.connect('mongodb://localhost:27017/TodoApp');
+var app = express(); // installing route
 
-var Todo = mongoose.model('Todo', {
-	text: {
-		type: String,
-		required: true,
-		trim: true,
-		minlength: 1
-	},
-	completed: {
-		type: Boolean,
-		default: false,
-		required: true
-	},
-	completedAt: {
-		type: Number,
-		required: true
-	}
+app.use(bodyParser.json());
+
+app.post('/todos', (req, res) => {
+	 var todo = new Todo({
+	 	text: req.body.text
+	 });
+
+	 todo.save().then((doc) => {
+	 	res.send(doc);
+	 }, (e) => {
+	 	res.status(400).send(e);
+	 });
+
+}); // End of Post request
+
+// sends GET request 
+app.get('/todos', (req, res) => {
+	Todo.find().then((todos) => {
+		res.send({todos});
+	}, (e) => {
+		res.status(400).send(e);
+	});
 });
 
-var newTodo = new Todo({
-	text: ' Learn Nodejs    ',
-	completed: true,
-	completedAt: 123
+
+
+app.listen(3000, () => {
+	console.log('Server listening on port 3000');
 });
 
-newTodo.save().then((docs) => {
-	console.log(docs);
-}, (e) => {
-	console.log('Unable to add todos');
-});
+
+module.exports = {app}
