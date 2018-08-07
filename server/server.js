@@ -9,12 +9,12 @@ var app = express(); // installing route
 
 app.use(bodyParser.json());
 
-app.post('/todos', (req, res) => {
-	 var todo = new Todo({
-	 	text: req.body.text
+app.post('/users', (req, res) => {
+	 var user = new User({
+	 	email: req.body.email
 	 });
 
-	 todo.save().then((doc) => {
+	 user.save().then((doc) => {
 	 	res.send(doc);
 	 }, (e) => {
 	 	res.status(400).send(e);
