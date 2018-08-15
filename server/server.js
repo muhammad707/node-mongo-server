@@ -5,6 +5,7 @@ const _ = require('lodash');
 var { mongoose } = require('./db/mongodb'); // object destructuring that only stores mongoose property
 var { Todo } = require('./models/todos'); // stores todo model
 var { User } = require('./models/user'); //stores user model
+var {authenticate} = require('./middleware/authenticate'); //authenticate middleware
 
 const port =  3000;
 var app = express(); // installing route
@@ -98,10 +99,30 @@ app.patch('/todos/:id', (req, res) => {
 	}).catch((e) => {
 		res.status(400).send()
 	})
+}); // End of PATCH request
+
+/*
+  Adding user to users collection
+*/
+app.post('/users', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password']);
+  var user = new User(body);
+
+  user.save().then(() => {
+    return user.generateAuthToken();
+  }).then((token) => {
+    res.header('x-auth', token).send(user);
+  }).catch((e) => {
+    res.status(400).send(e);
+  })
+});
+
+app.get('/users/me', authenticate,  (req, res) => {
+	res.send(req.user);
 });
 
 // Port 
-app.listen(port, () => {
+app.listen(3000, () => {
 	console.log(`Server is running on port ${port}`);
 });
 

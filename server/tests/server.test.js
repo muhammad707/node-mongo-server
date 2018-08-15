@@ -12,7 +12,9 @@ var todos = [{
 	},
 	{
 		_id: new ObjectID(),
-		text: 'Second test todo'
+		text: 'Second test todo',
+		completed: true,
+		completedAt: 777
 	}
 ];
 beforeEach((done) => {
@@ -146,6 +148,29 @@ describe('DELETE/todo/:id', () => {
 		   .delete('/todos/2233')
 		   .expect(404)
 		   .end(done);
+	});
+});
+
+/************************* UPDATE TODOS BY ID ********************************/
+
+describe('PATCH/todos/:id', () => {
+	it('should patch by id and update', (done) => {
+		var hexId = todos[0]._id.toHexString();
+		var text = 'This should be the new text';
+		request(app)
+		 .patch(`/todos/${hexId}`)
+		 .send({
+		 	completed: true,
+		 	text
+		 })
+		 .expect(200)
+		 .expect((res) => {
+		 	expect(res.body.todo.text).toBe(text);
+		 	expect(res.body.todo.completed).toBe(true);
+		 	expect(res.body.todo.completedAt).toBeA('number')
+		 })
+		 .end(done);
+
 	});
 });
 
