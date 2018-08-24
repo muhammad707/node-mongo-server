@@ -10,7 +10,7 @@ var users = [{
 	password: 'inha707',
 	tokens: [{
 		access: 'auth',
-		token: jwt.sign({_id: userOneId, access: 'auth'}, process.env['JWT_SECRET']).toString()
+		token: jwt.sign({_id: userOneId, access: 'auth'}, 'abc123').toString()
 	}]
 }, {
 	_id: userTwoId,
@@ -19,7 +19,7 @@ var users = [{
 	_creator: userTwoId,
 	tokens: [{
 		access: 'auth',
-		token: jwt.sign({_id: userTwoId, access: 'auth'}, process.env['JWT_SECRET']).toString()
+		token: jwt.sign({_id: userTwoId, access: 'auth'}, 'abc123').toString()
 	}]
 }];
 
